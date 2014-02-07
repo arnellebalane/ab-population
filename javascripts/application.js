@@ -1,8 +1,9 @@
 var config = {
-  initialPopulationSize: 100
+  initialPopulationSize: 10000
 };
 
 $(document).ready(function() {
+  simulation.initialize();
   world.initialize();
   agents.initialize();
   graph.initialize();
@@ -23,6 +24,7 @@ var agents = {
       var person = new Person();
       agents.people.push(person);
     }
+    stats.updatePopulationSize();
   }
 };
 
@@ -37,7 +39,35 @@ var graph = {
   }
 };
 
+var stats = {
+  update: function() {
+    stats.updatePopulationSize();
+  },
+  updatePopulationSize: function() {
+    var populationSize = utilities.formatNumber(agents.people.length);
+    $('p[data-label="population-size"]').text(populationSize);
+  }
+};
+
+var utilities = {
+  formatNumber: function(number) {
+    number = '' + number;
+    var result = '';
+    for (var i = number.length - 1, j = 0; i >= 0; i--, j++) {
+      if (j == 3) {
+        j = 0;
+        result = ',' + result;
+      }
+      result = number.charAt(i) + result;
+    }
+    return result;
+  }
+};
+
 var simulation = {
+  initialize: function() {
+    document.addEventListener('timestep', stats.update);
+  },
   dispatch: function(event) {
     document.dispatchEvent(event);
   }
