@@ -26,6 +26,11 @@ body {
   float: left;
   width: 75%;
   height: 100%;
+  padding: 50px;
+}
+
+.graph {
+  height: 100%;
 }
 
 aside {
