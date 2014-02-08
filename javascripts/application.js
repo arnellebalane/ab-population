@@ -1,5 +1,7 @@
 var config = {
-  initialPopulationSize: 10000
+  initialPopulationSize: 10000,
+  initialBirthRate: 0.1,
+  initialDeathRate: 0.1
 };
 
 $(document).ready(function() {
@@ -76,6 +78,11 @@ var simulation = {
 
 
 function Environment() {
+  this.rates = {
+    birth: config.initialBirthRate,
+    death: config.initialDeathRate
+  };
+
   this.run = function() {
     setInterval(function() {
       var event = new Event('timestep');
@@ -87,13 +94,51 @@ function Environment() {
 function Person() {
   this.age = 0;
   this.gender = ['male', 'female'][Math.floor(Math.random() * 10) % 2];
+  this.probabilities = {
+    die: {
+      calculate: function() {
+        return 1 - Math.pow(Math.E, -world.environment.rates.death);
+      },
+      execute: function() {
+        console.log('died');
+      }
+    },
+    giveBirth: {
+      calculate: function() {
+        return 1 - Math.pow(Math.E, -world.environment.rates.birth);
+      },
+      execute: function() {
+        console.log('gave birth');
+      }
+    }
+  };
 
   (function(person) {
     person.growOld = function() {
       person.age++;
     }
+    person.calculateProbabilities = function() {
+      var ceil = 0;
+      for (probability in person.probabilities) {
+        var chance = person.probabilities[probability].calculate();
+        person.probabilities[probability].min = ceil;
+        person.probabilities[probability].max = ceil + chance;
+        ceil = chance;
+      }
+    }
+    person.takeChances = function() {
+      var chance = Math.random();
+      for (probability in person.probabilities) {
+        if (chance >= person.probabilities[probability].min && chance < person.probabilities[probability].max) {
+          person.probabilities[probability].execute();
+          break;
+        }
+      }
+    }
     person.respond = function() {
       person.growOld();
+      person.calculateProbabilities();
+      person.takeChances();
     }
 
     document.addEventListener('timestep', person.respond);
