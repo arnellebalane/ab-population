@@ -11,6 +11,7 @@ var simulation = {
   config: {},
   environment: null,
   population: {},
+  interval: null,
   initialize: function(config) {
     simulation.config = config;
     simulation.environment = new Environment(config);
@@ -29,11 +30,11 @@ var simulation = {
     transmitter.transmit('initialized');
   },
   start: function() {
-    setInterval(function() {
+    simulation.interval = setInterval(function() {
       simulation.population.births = 0;
       simulation.population.deaths = 0;
       simulation.timestep();
-    }, 1000);
+    }, 10);
   },
   timestep: function() {
     var dead = [];
@@ -52,6 +53,10 @@ var simulation = {
       simulation.population.people.splice(dead.pop(), 1);
     }
     stats.update();
+
+    if (simulation.population.size == 0) {
+      clearInterval(simulation.interval);
+    }
   }
 };
 

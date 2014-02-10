@@ -42,13 +42,13 @@ var stats = {
 var graph = {
   canvas: null,
   context: null,
-  timestep: 0,
+  timestep: -3,
   previousPoint: {},
   initialize: function() {
     graph.canvas = document.getElementById('graph');
     graph.context = graph.canvas.getContext('2d');
-    graph.canvas.width = $('.graph').width();
-    graph.canvas.height = $('.graph').height();
+    graph.canvas.width = $('.viewport').width() * 10;
+    graph.canvas.height = $('.viewport').height();
 
     graph.context.strokeStyle = "#eeeeee";
     graph.context.beginPath();
@@ -63,7 +63,13 @@ var graph = {
   plot: function(data) {
     var ratio = data.populationSize / (2 * config.initialPopulationSize);
     var y = graph.canvas.height - graph.canvas.height * ratio;
+
     graph.timestep += 3;
+    var container = $('.graph-container');
+    if (graph.timestep > container.width()) {
+      container.width(container.width() + 3);
+      $('.viewport').scrollLeft(container.width());
+    }
 
     graph.context.strokeStyle = "#333333";
     graph.context.beginPath();

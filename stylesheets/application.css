@@ -32,7 +32,6 @@ body {
 .graph {
   height: 100%;
   position: relative;
-  border-left: 1px solid #eeeeee;
 }
 
 .graph:before {
@@ -45,7 +44,25 @@ body {
   color: #aaaaaa;
   text-align: right;
   padding-right: 10px;
-  margin-top: -9px;
+  margin-top: -21px;
+}
+
+.viewport {
+  width: 100%;
+  height: 100%;
+  border-left: 1px solid #eeeeee;
+  padding-bottom: 24px;
+  overflow: auto;
+  position: relative;
+}
+
+.graph-container {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
 }
 
 aside {
