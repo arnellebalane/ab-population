@@ -34,17 +34,27 @@ body {
   position: relative;
 }
 
-.graph:before {
-  content: attr(data-initial);
+.graph:before,
+.graph:after {
   position: absolute;
-  top: 50%;
   left: -75px;
   width: 75px;
   font: normal 1.2rem "Open Sans";
   color: #aaaaaa;
   text-align: right;
   padding-right: 10px;
+}
+
+.graph:before {
+  content: attr(data-initial);
+  top: 50%;
   margin-top: -21px;
+}
+
+.graph:after {
+  content: "0";
+  top: 100%;
+  margin-top: -34px;
 }
 
 .viewport {

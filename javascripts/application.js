@@ -55,6 +55,9 @@ var graph = {
     graph.context.moveTo(0, graph.canvas.height / 2);
     graph.context.lineTo(graph.canvas.width, graph.canvas.height / 2);
     graph.context.stroke();
+    graph.context.moveTo(0, graph.canvas.height);
+    graph.context.lineTo(graph.canvas.width, graph.canvas.height);
+    graph.context.stroke();
 
     graph.previousPoint = {x: 0, y: graph.canvas.height / 2};
 
