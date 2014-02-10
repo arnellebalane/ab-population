@@ -26,11 +26,25 @@ body {
   float: left;
   width: 75%;
   height: 100%;
-  padding: 50px;
+  padding-left: 75px;
 }
 
 .graph {
   height: 100%;
+  position: relative;
+}
+
+.graph:before {
+  content: attr(data-initial);
+  position: absolute;
+  top: 50%;
+  left: -75px;
+  width: 75px;
+  font: normal 1.2rem "Open Sans";
+  color: #aaaaaa;
+  text-align: right;
+  padding-right: 10px;
+  margin-top: -9px;
 }
 
 aside {

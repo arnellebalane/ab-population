@@ -68,49 +68,21 @@ var stats = {
     transmitter.transmit('graph', stat);
   },
   populationSize: function() {
-    return utilities.formatNumber(simulation.population.people.length);
+    return simulation.population.people.length;
   },
   birthCount: function() {
-    return utilities.formatNumber(simulation.population.births);
+    return simulation.population.births;
   },
   birthRate: function() {
     var rate = simulation.population.births / simulation.population.females * 100;
-    return utilities.formatPercentage((isNaN(rate)) ? 0 : rate);
+    return (isNaN(rate)) ? 0 : rate;
   },
   deathCount: function() {
-    return utilities.formatNumber(simulation.population.deaths);
+    return simulation.population.deaths;
   },
   deathRate: function() {
     var rate = simulation.population.deaths / simulation.population.size * 100;
-    return utilities.formatPercentage((isNaN(rate)) ? 0 : rate);
-  }
-};
-
-var utilities = {
-  formatNumber: function(number) {
-    number = '' + number;
-    if (number.length > 3) {
-      var result = '';
-      for (var i = number.length - 1, j = 0; i >= 0; i--, j++) {
-        if (j == 3) {
-          j = 0;
-          result = ',' + result;
-        }
-        result = number.charAt(i) + result;
-      }
-      return result;
-    }
-    return number;
-  },
-  formatPercentage: function(percentage) {
-    percentage = '' + percentage;
-    var result = '';
-    percentage = percentage.split('.');
-    result += percentage.shift();
-    if (percentage.length > 0) {
-      result += '.' + percentage.shift().substring(0, 2);
-    }
-    return result + '%';
+    return (isNaN(rate)) ? 0 : rate;
   }
 };
 
