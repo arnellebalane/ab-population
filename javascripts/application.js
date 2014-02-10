@@ -6,7 +6,7 @@ $(document).ready(function() {
 var config = {
   initialPopulationSize: 10000,
   initialBirthRate: 0.1,
-  initialDeathRate: 0.1
+  initialDeathRate: 0.02
 };
 
 var simulation = {
@@ -32,17 +32,25 @@ var simulation = {
 var stats = {
   update: function(data) {
     $('p[data-label="population-size"]').text(data.populationSize);
+    $('p[data-label="birth-count"]').text(data.birthCount);
+    $('p[data-label="birth-rate"]').text(data.birthRate);
+    $('p[data-label="death-count"]').text(data.deathCount);
+    $('p[data-label="death-rate"]').text(data.deathRate);
   }
 };
 
 var graph = {
   canvas: null,
   context: null,
+  timestep: 0,
   initialize: function() {
     graph.canvas = document.getElementById('graph');
     graph.context = graph.canvas.getContext('2d');
     graph.canvas.width = $('.graph').width();
     graph.canvas.height = $('.graph').height();
+  },
+  plot: function(data) {
+
   }
 };
 
@@ -62,5 +70,8 @@ var receiver = {
   },
   stat: function(data) {
     stats.update(data);
+  },
+  graph: function(data) {
+    graph.plot(data);
   }
 };
