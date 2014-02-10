@@ -43,6 +43,7 @@ var graph = {
   canvas: null,
   context: null,
   timestep: 0,
+  previousPoint: {},
   initialize: function() {
     graph.canvas = document.getElementById('graph');
     graph.context = graph.canvas.getContext('2d');
@@ -50,17 +51,27 @@ var graph = {
     graph.canvas.height = $('.graph').height();
 
     graph.context.strokeStyle = "#eeeeee";
+    graph.context.beginPath();
     graph.context.moveTo(0, graph.canvas.height / 2);
     graph.context.lineTo(graph.canvas.width, graph.canvas.height / 2);
     graph.context.stroke();
-    graph.context.moveTo(0, 0);
-    graph.context.lineTo(0, graph.canvas.height);
-    graph.context.stroke();
+
+    graph.previousPoint = {x: 0, y: graph.canvas.height / 2};
 
     $('.graph').attr('data-initial', utilities.formatNumber(config.initialPopulationSize));
   },
   plot: function(data) {
-    
+    var ratio = data.populationSize / (2 * config.initialPopulationSize);
+    var y = graph.canvas.height - graph.canvas.height * ratio;
+    graph.timestep += 3;
+
+    graph.context.strokeStyle = "#333333";
+    graph.context.beginPath();
+    graph.context.moveTo(graph.previousPoint.x, graph.previousPoint.y);
+    graph.context.lineTo(graph.timestep, y);
+    graph.context.stroke();
+
+    graph.previousPoint = {x: graph.timestep, y: y};
   }
 };
 

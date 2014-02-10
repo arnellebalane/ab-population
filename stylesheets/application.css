@@ -32,6 +32,7 @@ body {
 .graph {
   height: 100%;
   position: relative;
+  border-left: 1px solid #eeeeee;
 }
 
 .graph:before {
