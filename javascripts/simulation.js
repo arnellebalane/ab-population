@@ -134,7 +134,8 @@ function Person() {
   this.probabilities = {
     die: {
       calculate: function() {
-        return 1 - Math.pow(Math.E, -simulation.environment.rates.death);
+        // return 1 - Math.pow(Math.E, -simulation.environment.rates.death);
+        return simulation.environment.rates.death;
       },
       execute: function() {
         simulation.population[_this.gender + 's']--;
@@ -143,7 +144,8 @@ function Person() {
     },
     giveBirth: {
       calculate: function() {
-        return (_this.gender == 'male' || _this.age < 16 || _this.age > 45) ? 0 : 1 - Math.pow(Math.E, -simulation.environment.rates.birth);
+        // return (_this.gender == 'male' || _this.age < 16 || _this.age > 45) ? 0 : 1 - Math.pow(Math.E, -simulation.environment.rates.birth);
+        return (_this.gender == 'male' || _this.age < 16 || _this.age > 45) ? 0 : simulation.environment.rates.birth;
       },
       execute: function() {
         var child = new Person();

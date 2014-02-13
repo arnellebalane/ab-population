@@ -4,7 +4,7 @@ $(document).ready(function() {
 });
 
 var config = {
-  initialPopulationSize: 10000,
+  initialPopulationSize: 1000,
   initialBirthRate: 0.1,
   initialDeathRate: 0.02
 };
