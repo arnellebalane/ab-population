@@ -21,6 +21,7 @@ var simulation = {
     simulation.population.females = 0;
     simulation.population.births = 0;
     simulation.population.deaths = 0;
+    simulation.population.immigrations = 0;
     for (var i = 0; i < config.initialPopulationSize; i++) {
       var person = new Person();
       simulation.population.people.push(person);
@@ -33,24 +34,24 @@ var simulation = {
     simulation.interval = setInterval(function() {
       simulation.population.births = 0;
       simulation.population.deaths = 0;
+      simulation.population.immigrations = 0;
       simulation.timestep();
     }, 10);
   },
   timestep: function() {
-    var dead = [];
+    var removeables = [];
     simulation.population.size = simulation.population.people.length;
     for (var i = 0, size = simulation.population.size; i < size; i++) {
       var person = simulation.population.people[i];
       person.growOld();
       person.calculateProbabilities();
       person.takeChances();
-      if (!person.alive) {
-        dead.push(i);
+      if (!person.keep) {
+        removeables.push(i);
       }
     }
-    simulation.population.deaths = dead.length;
-    while (dead.length > 0) {
-      simulation.population.people.splice(dead.pop(), 1);
+    while (removeables.length > 0) {
+      simulation.population.people.splice(removeables.pop(), 1);
     }
     stats.update();
 
@@ -67,7 +68,9 @@ var stats = {
       birthCount: stats.birthCount(),
       birthRate: stats.birthRate(),
       deathCount: stats.deathCount(),
-      deathRate: stats.deathRate()
+      deathRate: stats.deathRate(),
+      immigrations: stats.immigrations(),
+      immigrationRate: stats.immigrationRate()
     };
     transmitter.transmit('stat', stat);
     transmitter.transmit('graph', stat);
@@ -87,6 +90,13 @@ var stats = {
   },
   deathRate: function() {
     var rate = simulation.population.deaths / simulation.population.size * 100;
+    return (isNaN(rate)) ? 0 : rate;
+  },
+  immigrations: function() {
+    return simulation.population.immigrations;
+  },
+  immigrationRate: function() {
+    var rate = simulation.population.immigrations / simulation.population.size * 100;
     return (isNaN(rate)) ? 0 : rate;
   }
 };
@@ -112,7 +122,8 @@ var receiver = {
 function Environment(config) {
   this.rates = {
     birth: config.initialBirthRate,
-    death: config.initialDeathRate
+    death: config.initialDeathRate,
+    immigration: config.initialImmigrationRate
   };
 
   this.run = function() {
@@ -125,7 +136,7 @@ function Environment(config) {
 
 function Person() {
   var _this = this;
-  this.alive = true;
+  this.keep = true;
   this.age = Math.floor(Math.random() * 50);
   this.gender = ['male', 'female'][Math.floor(Math.random() * 10) % 2];
 
@@ -139,7 +150,8 @@ function Person() {
       },
       execute: function() {
         simulation.population[_this.gender + 's']--;
-        _this.alive = false;
+        simulation.population.deaths++;
+        _this.keep = false;
       }
     },
     giveBirth: {
@@ -151,6 +163,16 @@ function Person() {
         var child = new Person();
         simulation.population.people.push(child);
         simulation.population.births++;
+      }
+    },
+    migrate: {
+      calculate: function() {
+        return simulation.environment.rates.immigration;
+      },
+      execute: function() {
+        simulation.population[_this.gender + 's']--;
+        simulation.population.immigrations++;
+        _this.keep = false;
       }
     }
   };
