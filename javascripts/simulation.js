@@ -40,6 +40,9 @@ var simulation = {
       simulation.timestep();
     }, 10);
   },
+  stop: function() {
+    clearInterval(simulation.interval);
+  },
   timestep: function() {
     simulation.environment.calculateProbabilities();
     simulation.environment.takeChances();
@@ -61,7 +64,7 @@ var simulation = {
     stats.update();
 
     if (simulation.population.size == 0) {
-      clearInterval(simulation.interval);
+      simulation.stop();
     }
   }
 };
@@ -128,6 +131,9 @@ var receiver = {
   },
   start: function() {
     simulation.start();
+  },
+  stop: function() {
+    simulation.stop();
   }
 };
 

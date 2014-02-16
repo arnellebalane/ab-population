@@ -75,7 +75,9 @@ var graph = {
 
     graph.timestep += 3;
     var container = $('.graph-container');
-    if (graph.timestep > container.width()) {
+    if (graph.timestep > graph.canvas.width) {
+      transmitter.transmit('stop');
+    } else if (graph.timestep > container.width()) {
       container.width(container.width() + 3);
       $('.viewport').scrollLeft(container.width());
     }
