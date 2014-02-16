@@ -7,7 +7,8 @@ var config = {
   initialPopulationSize: 1000,
   initialBirthRate: 0.1,
   initialDeathRate: 0.01,
-  initialImmigrationRate: 0.05
+  initialImmigrationRate: 0.05,
+  initialEmmigrationRate: 0.5,
 };
 
 var simulation = {
@@ -39,6 +40,8 @@ var stats = {
     $('p[data-label="death-rate"]').text(utilities.formatPercentage(data.deathRate));
     $('p[data-label="immigrants"]').text(utilities.formatNumber(data.immigrations));
     $('p[data-label="immigration-rate"]').text(utilities.formatPercentage(data.immigrationRate));
+    $('p[data-label="emmigrants"]').text(utilities.formatNumber(data.emmigrations));
+    $('p[data-label="emmigration-rate"]').text(utilities.formatPercentage(data.emmigrationRate));
   }
 };
 

@@ -22,6 +22,7 @@ var simulation = {
     simulation.population.births = 0;
     simulation.population.deaths = 0;
     simulation.population.immigrations = 0;
+    simulation.population.emmigrations = 0;
     for (var i = 0; i < config.initialPopulationSize; i++) {
       var person = new Person();
       simulation.population.people.push(person);
@@ -35,10 +36,14 @@ var simulation = {
       simulation.population.births = 0;
       simulation.population.deaths = 0;
       simulation.population.immigrations = 0;
+      simulation.population.emmigrations = 0;
       simulation.timestep();
     }, 10);
   },
   timestep: function() {
+    simulation.environment.calculateProbabilities();
+    simulation.environment.takeChances();
+
     var removeables = [];
     simulation.population.size = simulation.population.people.length;
     for (var i = 0, size = simulation.population.size; i < size; i++) {
@@ -70,7 +75,9 @@ var stats = {
       deathCount: stats.deathCount(),
       deathRate: stats.deathRate(),
       immigrations: stats.immigrations(),
-      immigrationRate: stats.immigrationRate()
+      immigrationRate: stats.immigrationRate(),
+      emmigrations: stats.emmigrations(),
+      emmigrationRate: stats.emmigrationRate()
     };
     transmitter.transmit('stat', stat);
     transmitter.transmit('graph', stat);
@@ -98,6 +105,13 @@ var stats = {
   immigrationRate: function() {
     var rate = simulation.population.immigrations / simulation.population.size * 100;
     return (isNaN(rate)) ? 0 : rate;
+  },
+  emmigrations: function() {
+    return simulation.population.emmigrations;
+  },
+  emmigrationRate: function() {
+    var rate = simulation.population.emmigrations / simulation.population.size * 100;
+    return (isNaN(rate)) ? 0 : rate;
   }
 };
 
@@ -123,14 +137,42 @@ function Environment(config) {
   this.rates = {
     birth: config.initialBirthRate,
     death: config.initialDeathRate,
-    immigration: config.initialImmigrationRate
+    immigration: config.initialImmigrationRate,
+    emmigration: config.initialEmmigrationRate
+  };
+  this.probabilities = {
+    emmigrate: {
+      calculate: function() {
+        return simulation.environment.rates.emmigration;
+      },
+      execute: function() {
+        var emmigrants = Math.random() * 100;
+        for (var i = 0; i < emmigrants; i++) {
+          var emmigrant = new Person();
+          simulation.population.people.push(emmigrant);
+          simulation.population.emmigrations++;
+        }
+      }
+    }
   };
 
-  this.run = function() {
-    setInterval(function() {
-      var event = new Event('timestep');
-      simulation.dispatch(event);
-    }, 1000);
+  this.calculateProbabilities = function() {
+    var ceil = 0;
+    for (probability in this.probabilities) {
+      var chance = this.probabilities[probability].calculate();
+      this.probabilities[probability].min = ceil;
+      this.probabilities[probability].max = ceil + chance;
+      ceil += chance;
+    }
+  }
+  this.takeChances = function() {
+    var chance = Math.random();
+    for (probability in this.probabilities) {
+      if (chance >= this.probabilities[probability].min && chance < this.probabilities[probability].max) {
+        this.probabilities[probability].execute();
+        break;
+      }
+    }
   }
 }
 
@@ -145,7 +187,6 @@ function Person() {
   this.probabilities = {
     die: {
       calculate: function() {
-        // return 1 - Math.pow(Math.E, -simulation.environment.rates.death);
         return simulation.environment.rates.death;
       },
       execute: function() {
@@ -156,7 +197,6 @@ function Person() {
     },
     giveBirth: {
       calculate: function() {
-        // return (_this.gender == 'male' || _this.age < 16 || _this.age > 45) ? 0 : 1 - Math.pow(Math.E, -simulation.environment.rates.birth);
         return (_this.gender == 'male' || _this.age < 16 || _this.age > 45) ? 0 : simulation.environment.rates.birth;
       },
       execute: function() {
