@@ -44,13 +44,11 @@ var config = {
     ],
     immigrationRate: 0.0,
     emmigrationRate: 0.0,
-    maxTimesteps: 25,
+    maxTimesteps: 100,
   },
   graph: {
-    maxPopulationSize: 150000, 
-    verticalSegments: 10,
-    horizontalSegmentSpacing: 100,
-    horizontalSegmentStartLabel: 2009
+    maxPopulationSize: 200000, 
+    verticalSegments: 10
   }
 };
 
@@ -119,27 +117,21 @@ var graph = {
       currentSegment += interval;
     }
 
-    // for (var i = 1; i * config.graph.horizontalSegmentSpacing <= graph.canvas.width; i++) {
-    //   for (var j = 0; j < graph.canvas.height; j += dashLength + dashSpacing) {
-    //     graph.context.beginPath();
-    //     graph.context.moveTo(i * config.graph.horizontalSegmentSpacing, j);
-    //     graph.context.lineTo(i * config.graph.horizontalSegmentSpacing, j + dashLength);
-    //     graph.context.stroke();
-    //   }
-    //   var label = $('<span>' + config.graph.horizontalSegmentStartLabel++ + '</span>');
-    //   $('.horizontal-labels').append(label);
-    //   label.css({'left': i * config.graph.horizontalSegmentSpacing + 'px'});
-    // }
-
-    graph.previousPoint = graph.convert(0, config.simulation.initialPopulationSize);
+    var initialPopulationSize = 0;
+    for (var i = 0; i < config.simulation.initialPopulation.length; i++) {
+      var ageGroup = config.simulation.initialPopulation[i];
+      initialPopulationSize += ageGroup.males + ageGroup.females;
+    }
+    graph.previousPoint = graph.convert(0, initialPopulationSize);
   },
   plot: function(data) {
-    graph.timestep += 3;
+    var horizontalInterval = (config.simulation.maxTimesteps > 0) ? $('.viewport').width() / config.simulation.maxTimesteps : 3;
+    graph.timestep += horizontalInterval;
     var container = $('.graph-container');
     if (graph.timestep > graph.canvas.width) {
       transmitter.transmit('stop');
     } else if (graph.timestep > container.width()) {
-      container.width(container.width() + 3);
+      container.width(container.width() + horizontalInterval);
       $('.viewport').scrollLeft(container.width());
     }
 
@@ -206,7 +198,7 @@ var receiver = {
   graph: function(data) {
     graph.plot(data);
     console.log((2009 + simulation.timesteps) + ': ' + utilities.formatNumber((data.populationSize * 10000)));
-    if (++simulation.timesteps == config.simulation.maxTimesteps) {
+    if (config.simulation.maxTimesteps > 0 && ++simulation.timesteps == config.simulation.maxTimesteps - 1) {
       transmitter.transmit('stop');
     }
   }
