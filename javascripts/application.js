@@ -23,19 +23,40 @@ var config = {
       {minAge: 65, maxAge: 69, males: 72, females: 83},
       {minAge: 70, maxAge: 100, males: 95, females: 127}
     ],
-    birthRate: 0.3,
-    deathRate: 0.05,
+    birthRate: 0.182,
+    deathRates: [
+      {minAge: 0, maxAge: 0, males: 0, females: 0},
+      {minAge: 1, maxAge: 4, males: 0.012, females: 0.01},
+      {minAge: 5, maxAge: 9, males: 0.006, females: 0.004},
+      {minAge: 10, maxAge: 14, males: 0.005, females: 0.004},
+      {minAge: 15, maxAge: 19, males: 0.011, females: 0.006},
+      {minAge: 20, maxAge: 24, males: 0.018, females: 0.008},
+      {minAge: 25, maxAge: 29, males: 0.022, females: 0.01},
+      {minAge: 30, maxAge: 34, males: 0.028, females: 0.013},
+      {minAge: 35, maxAge: 39, males: 0.037, females: 0.019},
+      {minAge: 40, maxAge: 44, males: 0.051, females: 0.027},
+      {minAge: 45, maxAge: 49, males: 0.077, females: 0.04},
+      {minAge: 50, maxAge: 54, males: 0.12, females: 0.062},
+      {minAge: 55, maxAge: 59, males: 0.183, females: 0.092},
+      {minAge: 60, maxAge: 64, males: 0.282, females: 0.146},
+      {minAge: 65, maxAge: 69, males: 0.366, females: 0.196},
+      {minAge: 70, maxAge: 100, males: 0.889, females: 0.736}
+    ],
     immigrationRate: 0.0,
-    emmigrationRate: 0.0
+    emmigrationRate: 0.0,
+    maxTimesteps: 25,
   },
   graph: {
     maxPopulationSize: 150000, 
-    verticalSegments: 10
+    verticalSegments: 10,
+    horizontalSegmentSpacing: 100,
+    horizontalSegmentStartLabel: 2009
   }
 };
 
 var simulation = {
   worker: null,
+  timesteps: 0,
   initialize: function() {
     simulation.worker = new Worker('javascripts/simulation.js');
     simulation.worker.onmessage = function(message) {
@@ -82,14 +103,14 @@ var graph = {
     graph.context.strokeStyle = '#eeeeee';
     var interval = Math.floor(config.graph.maxPopulationSize / config.graph.verticalSegments);
     var currentSegment = 0;
-    var dashWidth = 10;
+    var dashLength = 10;
     var dashSpacing = 5;
     for (var i = 0; i <= config.graph.verticalSegments; i++) {
       var coordinates = graph.convert(0, currentSegment);
-      for (var j = 0; j < graph.canvas.width; j += dashWidth + dashSpacing) {
+      for (var j = 0; j < graph.canvas.width; j += dashLength + dashSpacing) {
         graph.context.beginPath();
         graph.context.moveTo(j, coordinates.y);
-        graph.context.lineTo(j + dashWidth, coordinates.y);
+        graph.context.lineTo(j + dashLength, coordinates.y);
         graph.context.stroke();
       }
       var label = $('<span>' + utilities.formatNumber(currentSegment) + '</span>');
@@ -97,6 +118,18 @@ var graph = {
       label.css({'top': coordinates.y + 'px'});
       currentSegment += interval;
     }
+
+    // for (var i = 1; i * config.graph.horizontalSegmentSpacing <= graph.canvas.width; i++) {
+    //   for (var j = 0; j < graph.canvas.height; j += dashLength + dashSpacing) {
+    //     graph.context.beginPath();
+    //     graph.context.moveTo(i * config.graph.horizontalSegmentSpacing, j);
+    //     graph.context.lineTo(i * config.graph.horizontalSegmentSpacing, j + dashLength);
+    //     graph.context.stroke();
+    //   }
+    //   var label = $('<span>' + config.graph.horizontalSegmentStartLabel++ + '</span>');
+    //   $('.horizontal-labels').append(label);
+    //   label.css({'left': i * config.graph.horizontalSegmentSpacing + 'px'});
+    // }
 
     graph.previousPoint = graph.convert(0, config.simulation.initialPopulationSize);
   },
@@ -172,5 +205,9 @@ var receiver = {
   },
   graph: function(data) {
     graph.plot(data);
+    console.log((2009 + simulation.timesteps) + ': ' + utilities.formatNumber((data.populationSize * 10000)));
+    if (++simulation.timesteps == config.simulation.maxTimesteps) {
+      transmitter.transmit('stop');
+    }
   }
 };

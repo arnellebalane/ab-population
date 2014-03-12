@@ -155,7 +155,7 @@ var utilities = {
 function Environment(config) {
   this.rates = {
     birth: config.birthRate,
-    death: config.deathRate,
+    death: config.deathRates,
     immigration: config.immigrationRate,
     emmigration: config.emmigrationRate
   };
@@ -206,7 +206,13 @@ function Person(config) {
   this.probabilities = {
     die: {
       calculate: function() {
-        return simulation.environment.rates.death;
+        for (var i = 0; i < simulation.environment.rates.death.length; i++) {
+          var rate = simulation.environment.rates.death[i];
+          if (_this.age >= rate.minAge && _this.age <= rate.maxAge) {
+            return rate[_this.gender + 's'];
+          }
+        }
+        return 1;
       },
       execute: function() {
         simulation.population[_this.gender + 's']--;
