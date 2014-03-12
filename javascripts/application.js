@@ -4,11 +4,17 @@ $(document).ready(function() {
 });
 
 var config = {
-  initialPopulationSize: 1000,
-  initialBirthRate: 0.1,
-  initialDeathRate: 0.01,
-  initialImmigrationRate: 0.05,
-  initialEmmigrationRate: 0.5,
+  simulation: {
+    initialPopulationSize: 10000,
+    initialBirthRate: 0.1,
+    initialDeathRate: 0.01,
+    initialImmigrationRate: 0.0,
+    initialEmmigrationRate: 0.0
+  },
+  graph: {
+    maxPopulationSize: 100000, 
+    verticalSegments: 10
+  }
 };
 
 var simulation = {
@@ -24,7 +30,7 @@ var simulation = {
       }
     }
 
-    transmitter.transmit('initialize', config);
+    transmitter.transmit('initialize', config.simulation);
   },
   start: function() {
     transmitter.transmit('start');
@@ -35,13 +41,13 @@ var stats = {
   update: function(data) {
     $('p[data-label="population-size"]').text(utilities.formatNumber(data.populationSize));
     $('p[data-label="birth-count"]').text(utilities.formatNumber(data.birthCount));
-    $('p[data-label="birth-rate"]').text(utilities.formatPercentage(data.birthRate));
+    // $('p[data-label="birth-rate"]').text(utilities.formatPercentage(data.birthRate));
     $('p[data-label="death-count"]').text(utilities.formatNumber(data.deathCount));
-    $('p[data-label="death-rate"]').text(utilities.formatPercentage(data.deathRate));
+    // $('p[data-label="death-rate"]').text(utilities.formatPercentage(data.deathRate));
     $('p[data-label="immigrants"]').text(utilities.formatNumber(data.immigrations));
-    $('p[data-label="immigration-rate"]').text(utilities.formatPercentage(data.immigrationRate));
+    // $('p[data-label="immigration-rate"]').text(utilities.formatPercentage(data.immigrationRate));
     $('p[data-label="emmigrants"]').text(utilities.formatNumber(data.emmigrations));
-    $('p[data-label="emmigration-rate"]').text(utilities.formatPercentage(data.emmigrationRate));
+    // $('p[data-label="emmigration-rate"]').text(utilities.formatPercentage(data.emmigrationRate));
   }
 };
 
@@ -56,23 +62,28 @@ var graph = {
     graph.canvas.width = $('.viewport').width() * 10;
     graph.canvas.height = $('.viewport').height();
 
-    graph.context.strokeStyle = "#eeeeee";
-    graph.context.beginPath();
-    graph.context.moveTo(0, graph.canvas.height / 2);
-    graph.context.lineTo(graph.canvas.width, graph.canvas.height / 2);
-    graph.context.stroke();
-    graph.context.moveTo(0, graph.canvas.height);
-    graph.context.lineTo(graph.canvas.width, graph.canvas.height);
-    graph.context.stroke();
+    graph.context.strokeStyle = '#eeeeee';
+    var interval = Math.floor(config.graph.maxPopulationSize / config.graph.verticalSegments);
+    var currentSegment = 0;
+    var dashWidth = 10;
+    var dashSpacing = 5;
+    for (var i = 0; i <= config.graph.verticalSegments; i++) {
+      var coordinates = graph.convert(0, currentSegment);
+      for (var j = 0; j < graph.canvas.width; j += dashWidth + dashSpacing) {
+        graph.context.beginPath();
+        graph.context.moveTo(j, coordinates.y);
+        graph.context.lineTo(j + dashWidth, coordinates.y);
+        graph.context.stroke();
+      }
+      var label = $('<span>' + utilities.formatNumber(currentSegment) + '</span>');
+      $('.segment-labels').append(label);
+      label.css({'top': coordinates.y + 'px'});
+      currentSegment += interval;
+    }
 
-    graph.previousPoint = {x: 0, y: graph.canvas.height / 2};
-
-    $('.graph').attr('data-initial', utilities.formatNumber(config.initialPopulationSize));
+    graph.previousPoint = graph.format(0, config.simulation.initialPopulationSize);
   },
   plot: function(data) {
-    var ratio = data.populationSize / (2 * config.initialPopulationSize);
-    var y = graph.canvas.height - graph.canvas.height * ratio;
-
     graph.timestep += 3;
     var container = $('.graph-container');
     if (graph.timestep > graph.canvas.width) {
@@ -82,13 +93,18 @@ var graph = {
       $('.viewport').scrollLeft(container.width());
     }
 
+    var coordinates = graph.convert(graph.timestep, data.populationSize);
     graph.context.strokeStyle = "#333333";
     graph.context.beginPath();
     graph.context.moveTo(graph.previousPoint.x, graph.previousPoint.y);
-    graph.context.lineTo(graph.timestep, y);
+    graph.context.lineTo(graph.timestep, coordinates.y);
     graph.context.stroke();
 
-    graph.previousPoint = {x: graph.timestep, y: y};
+    graph.previousPoint = coordinates;
+  },
+  convert: function(x, y) {
+    var ratio = y / config.graph.maxPopulationSize;
+    return {x: x, y: graph.canvas.height - graph.canvas.height * ratio};
   }
 };
 
