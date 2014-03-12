@@ -23,9 +23,16 @@ var simulation = {
     simulation.population.deaths = 0;
     simulation.population.immigrations = 0;
     simulation.population.emmigrations = 0;
-    for (var i = 0; i < config.initialPopulationSize; i++) {
-      var person = new Person();
-      simulation.population.people.push(person);
+    for (var i = 0; i < config.initialPopulation.length; i++) {
+      var ageGroup = config.initialPopulation[i];
+      for (var j = 0; j < ageGroup.males; j++) {
+        var person = new Person({gender: 'male', age: utilities.random(ageGroup.minAge, ageGroup.maxAge)});
+        simulation.population.people.push(person);
+      }
+      for (var j = 0; j < ageGroup.females; j++) {
+        var person = new Person({gender: 'female', age: utilities.random(ageGroup.minAge, ageGroup.maxAge)});
+        simulation.population.people.push(person);
+      }
     }
     stats.update();
 
@@ -137,14 +144,20 @@ var receiver = {
   }
 };
 
+var utilities = {
+  random: function(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+};
+
 
 
 function Environment(config) {
   this.rates = {
-    birth: config.initialBirthRate,
-    death: config.initialDeathRate,
-    immigration: config.initialImmigrationRate,
-    emmigration: config.initialEmmigrationRate
+    birth: config.birthRate,
+    death: config.deathRate,
+    immigration: config.immigrationRate,
+    emmigration: config.emmigrationRate
   };
   this.probabilities = {
     emmigrate: {
@@ -182,11 +195,11 @@ function Environment(config) {
   }
 }
 
-function Person() {
+function Person(config) {
   var _this = this;
   this.keep = true;
-  this.age = Math.floor(Math.random() * 50);
-  this.gender = ['male', 'female'][Math.floor(Math.random() * 10) % 2];
+  this.age = (config && typeof config == 'object' && 'age' in config) ? config.age : 0;
+  this.gender = (config && typeof config == 'object' && 'gender' in config) ? config.gender : ['male', 'female'][Math.floor(Math.random() * 10) % 2];
 
   simulation.population[this.gender + 's']++;
 
@@ -203,7 +216,7 @@ function Person() {
     },
     giveBirth: {
       calculate: function() {
-        return (_this.gender == 'male' || _this.age < 16 || _this.age > 45) ? 0 : simulation.environment.rates.birth;
+        return (_this.gender == 'male' || _this.age < 15 || _this.age > 49) ? 0 : simulation.environment.rates.birth;
       },
       execute: function() {
         var child = new Person();

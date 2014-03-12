@@ -5,14 +5,31 @@ $(document).ready(function() {
 
 var config = {
   simulation: {
-    initialPopulationSize: 10000,
-    initialBirthRate: 0.1,
-    initialDeathRate: 0.01,
-    initialImmigrationRate: 0.0,
-    initialEmmigrationRate: 0.0
+    initialPopulation: [
+      {minAge: 0, maxAge: 0, males: 115, females: 109},
+      {minAge: 1, maxAge: 4, males: 461, females: 443},
+      {minAge: 5, maxAge: 9, males: 544, females: 520},
+      {minAge: 10, maxAge: 14, males: 533, females: 511},
+      {minAge: 15, maxAge: 19, males: 488, females: 476},
+      {minAge: 20, maxAge: 24, males: 430, females: 430},
+      {minAge: 25, maxAge: 29, males: 379, females: 384},
+      {minAge: 30, maxAge: 34, males: 330, females: 327},
+      {minAge: 35, maxAge: 39, males: 302, females: 296},
+      {minAge: 40, maxAge: 44, males: 264, females: 256},
+      {minAge: 45, maxAge: 49, males: 223, females: 218},
+      {minAge: 50, maxAge: 54, males: 175, females: 172},
+      {minAge: 55, maxAge: 59, males: 134, females: 136},
+      {minAge: 60, maxAge: 64, males: 93, females: 98},
+      {minAge: 65, maxAge: 69, males: 72, females: 83},
+      {minAge: 70, maxAge: 100, males: 95, females: 127}
+    ],
+    birthRate: 0.3,
+    deathRate: 0.05,
+    immigrationRate: 0.0,
+    emmigrationRate: 0.0
   },
   graph: {
-    maxPopulationSize: 100000, 
+    maxPopulationSize: 150000, 
     verticalSegments: 10
   }
 };
@@ -81,7 +98,7 @@ var graph = {
       currentSegment += interval;
     }
 
-    graph.previousPoint = graph.format(0, config.simulation.initialPopulationSize);
+    graph.previousPoint = graph.convert(0, config.simulation.initialPopulationSize);
   },
   plot: function(data) {
     graph.timestep += 3;
