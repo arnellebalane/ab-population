@@ -42,12 +42,10 @@ var config = {
       {minAge: 65, maxAge: 69, males: 0.366, females: 0.196},
       {minAge: 70, maxAge: 100, males: 0.889, females: 0.736}
     ],
-    immigrationRate: 0.0,
-    emmigrationRate: 0.0,
-    maxTimesteps: 100,
+    maxTimesteps: 50,
   },
   graph: {
-    maxPopulationSize: 200000, 
+    maxPopulationSize: 40000, 
     verticalSegments: 10
   }
 };
@@ -77,13 +75,7 @@ var stats = {
   update: function(data) {
     $('p[data-label="population-size"]').text(utilities.formatNumber(data.populationSize));
     $('p[data-label="birth-count"]').text(utilities.formatNumber(data.birthCount));
-    // $('p[data-label="birth-rate"]').text(utilities.formatPercentage(data.birthRate));
     $('p[data-label="death-count"]').text(utilities.formatNumber(data.deathCount));
-    // $('p[data-label="death-rate"]').text(utilities.formatPercentage(data.deathRate));
-    $('p[data-label="immigrants"]').text(utilities.formatNumber(data.immigrations));
-    // $('p[data-label="immigration-rate"]').text(utilities.formatPercentage(data.immigrationRate));
-    $('p[data-label="emmigrants"]').text(utilities.formatNumber(data.emmigrations));
-    // $('p[data-label="emmigration-rate"]').text(utilities.formatPercentage(data.emmigrationRate));
   }
 };
 
