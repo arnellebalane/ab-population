@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'AaarghNormal';
+  src: url('../fonts/Aaargh/aaargh-webfont.eot');
+  src: url('../fonts/Aaargh/aaargh-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/Aaargh/aaargh-webfont.woff') format('woff'),
+       url('../fonts/Aaargh/aaargh-webfont.ttf') format('truetype'),
+       url('../fonts/Aaargh/aaargh-webfont.svg#aaarghnormal') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OpenSansRegular';
+  src: url('../fonts/Open Sans/OpenSans-Regular-webfont.eot');
+  src: url('../fonts/Open Sans/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/Open Sans/OpenSans-Regular-webfont.woff') format('woff'),
+       url('../fonts/Open Sans/OpenSans-Regular-webfont.ttf') format('truetype'),
+       url('../fonts/Open Sans/OpenSans-Regular-webfont.svg#open_sansregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OpenSansLight';
+  src: url('../fonts/Open Sans Light/OpenSans-Light-webfont.eot');
+  src: url('../fonts/Open Sans Light/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/Open Sans Light/OpenSans-Light-webfont.woff') format('woff'),
+       url('../fonts/Open Sans Light/OpenSans-Light-webfont.ttf') format('truetype'),
+       url('../fonts/Open Sans Light/OpenSans-Light-webfont.svg#open_sanslight') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
