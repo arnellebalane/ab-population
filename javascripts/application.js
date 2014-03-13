@@ -128,7 +128,8 @@ var graph = {
     }
 
     var coordinates = graph.convert(graph.timestep, data.populationSize);
-    graph.context.strokeStyle = "#333333";
+    graph.context.strokeStyle = '#014421';
+    graph.context.lineWidth = 2;
     graph.context.beginPath();
     graph.context.moveTo(graph.previousPoint.x, graph.previousPoint.y);
     graph.context.lineTo(graph.timestep, coordinates.y);
