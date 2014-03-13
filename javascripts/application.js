@@ -109,6 +109,14 @@ var graph = {
       currentSegment += interval;
     }
 
+    interval = (config.simulation.maxTimesteps > 0) ? $('.viewport').width() / config.simulation.maxTimesteps : 3
+    for (var i = interval; i < graph.canvas.width; i += interval) {
+      graph.context.beginPath();
+      graph.context.moveTo(i, 0);
+      graph.context.lineTo(i, 1000);
+      graph.context.stroke();
+    }
+
     var initialPopulationSize = 0;
     for (var i = 0; i < config.simulation.initialPopulation.length; i++) {
       var ageGroup = config.simulation.initialPopulation[i];
@@ -190,7 +198,7 @@ var receiver = {
   },
   graph: function(data) {
     graph.plot(data);
-    console.log((2009 + simulation.timesteps) + ': ' + utilities.formatNumber((data.populationSize * 10000)));
+    // console.log((2009 + simulation.timesteps) + ': ' + utilities.formatNumber((data.populationSize * 10000)));
     if (config.simulation.maxTimesteps > 0 && ++simulation.timesteps == config.simulation.maxTimesteps - 1) {
       transmitter.transmit('stop');
     }
