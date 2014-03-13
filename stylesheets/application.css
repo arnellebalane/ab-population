@@ -24,9 +24,9 @@ body {
 
 .content {
   float: left;
-  width: 82%;
+  width: 75%;
   height: 100%;
-  padding-left: 75px;
+  padding-left: 100px;
   position: relative;
 }
 
@@ -41,7 +41,7 @@ body {
 .segment-labels span {
   position: absolute;
   left: 0;
-  width: 75px;
+  width: 100px;
   font: normal 1.2rem "Open Sans", "OpenSansRegular";
   color: #aaaaaa;
   text-align: right;
@@ -74,7 +74,7 @@ body {
 
 aside {
   float: right;
-  width: 18%;
+  width: 25%;
   height: 100%;
   border-left: 1px solid #eeeeee;
   overflow: auto;
@@ -124,5 +124,5 @@ aside section p {
 }
 
 aside .full p {
-  font-size: 6rem;
+  font-size: 5rem;
 }

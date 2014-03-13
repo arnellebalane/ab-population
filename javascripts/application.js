@@ -73,9 +73,9 @@ var simulation = {
 
 var stats = {
   update: function(data) {
-    $('p[data-label="population-size"]').text(utilities.formatNumber(data.populationSize));
-    $('p[data-label="birth-count"]').text(utilities.formatNumber(data.birthCount));
-    $('p[data-label="death-count"]').text(utilities.formatNumber(data.deathCount));
+    $('p[data-label="population-size"]').text(utilities.formatNumber(data.populationSize * 10000));
+    $('p[data-label="birth-count"]').text(utilities.formatNumber(data.birthCount * 10000));
+    $('p[data-label="death-count"]').text(utilities.formatNumber(data.deathCount * 10000));
   }
 };
 
@@ -103,7 +103,7 @@ var graph = {
         graph.context.lineTo(j + dashLength, coordinates.y);
         graph.context.stroke();
       }
-      var label = $('<span>' + utilities.formatNumber(currentSegment) + '</span>');
+      var label = $('<span>' + utilities.formatNumber(currentSegment * 10000) + '</span>');
       $('.segment-labels').append(label);
       label.css({'top': coordinates.y + 'px'});
       currentSegment += interval;
@@ -198,7 +198,7 @@ var receiver = {
   },
   graph: function(data) {
     graph.plot(data);
-    // console.log((2009 + simulation.timesteps) + ': ' + utilities.formatNumber((data.populationSize * 10000)));
+    console.log((2009 + simulation.timesteps) + ': ' + utilities.formatNumber((data.populationSize * 10000)));
     if (config.simulation.maxTimesteps > 0 && ++simulation.timesteps == config.simulation.maxTimesteps - 1) {
       transmitter.transmit('stop');
     }
