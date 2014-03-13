@@ -42,10 +42,10 @@ var config = {
       {minAge: 65, maxAge: 69, males: 0.366, females: 0.196},
       {minAge: 70, maxAge: 100, males: 0.889, females: 0.736}
     ],
-    maxTimesteps: 50,
+    maxTimesteps: 100,
   },
   graph: {
-    maxPopulationSize: 40000, 
+    maxPopulationSize: 170000, 
     verticalSegments: 10
   }
 };
@@ -110,11 +110,13 @@ var graph = {
     }
 
     interval = (config.simulation.maxTimesteps > 0) ? $('.viewport').width() / config.simulation.maxTimesteps : 3
-    for (var i = interval; i < graph.canvas.width; i += interval) {
-      graph.context.beginPath();
-      graph.context.moveTo(i, 0);
-      graph.context.lineTo(i, 1000);
-      graph.context.stroke();
+    for (var i = interval, j = 1; i < graph.canvas.width; i += interval, j++) {
+      if (j % 5 == 0) {
+        graph.context.beginPath();
+        graph.context.moveTo(i, 0);
+        graph.context.lineTo(i, 1000);
+        graph.context.stroke();
+      }
     }
 
     var initialPopulationSize = 0;
