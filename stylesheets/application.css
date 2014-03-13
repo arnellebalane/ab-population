@@ -42,7 +42,7 @@ body {
   position: absolute;
   left: 0;
   width: 75px;
-  font: normal 1.2rem "Open Sans";
+  font: normal 1.2rem "Open Sans", "OpenSansRegular";
   color: #aaaaaa;
   text-align: right;
   padding-right: 10px;
@@ -110,7 +110,7 @@ aside .half:first-of-type {
 
 aside section label {
   display: inline-block;
-  font: normal 1.4rem/1 "Open Sans Light";
+  font: normal 1.4rem/1 "Open Sans Light", "OpenSansLight";
   color: #555555;
   text-transform: uppercase;
   white-space: nowrap;
@@ -118,7 +118,7 @@ aside section label {
 }
 
 aside section p {
-  font: normal 4rem/1 "Aaargh";
+  font: normal 4rem/1 "Aaargh", "AaarghNormal";
   color: #555555;
   white-space: nowrap;
 }
