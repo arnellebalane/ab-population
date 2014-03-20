@@ -10,23 +10,22 @@ onmessage = function(message) {
 var simulation = {
   config: {},
   environment: null,
-  population: {},
   interval: null,
   initialize: function(config) {
     simulation.config = config;
     simulation.environment = new Environment(config);
-    simulation.population.people = [];
-    simulation.population.births = 0;
-    simulation.population.deaths = 0;
+    simulation.environment.population.people = [];
+    simulation.environment.population.births = 0;
+    simulation.environment.population.deaths = 0;
     for (var i = 0; i < config.initialPopulation.length; i++) {
       var ageGroup = config.initialPopulation[i];
       for (var j = 0; j < ageGroup.males; j++) {
         var person = new Person({gender: 'male', age: utilities.random(ageGroup.minAge, ageGroup.maxAge)});
-        simulation.population.people.push(person);
+        simulation.environment.population.people.push(person);
       }
       for (var j = 0; j < ageGroup.females; j++) {
         var person = new Person({gender: 'female', age: utilities.random(ageGroup.minAge, ageGroup.maxAge)});
-        simulation.population.people.push(person);
+        simulation.environment.population.people.push(person);
       }
     }
     stats.update();
@@ -35,8 +34,8 @@ var simulation = {
   },
   start: function() {
     simulation.interval = setInterval(function() {
-      simulation.population.births = 0;
-      simulation.population.deaths = 0;
+      simulation.environment.population.births = 0;
+      simulation.environment.population.deaths = 0;
       simulation.timestep();
     }, 10);
   },
@@ -44,22 +43,9 @@ var simulation = {
     clearInterval(simulation.interval);
   },
   timestep: function() {
-    var removeables = [];
-    for (var i = 0, size = simulation.population.people.length; i < size; i++) {
-      var person = simulation.population.people[i];
-      person.growOld();
-      person.calculateProbabilities();
-      person.takeChances();
-      if (!person.alive) {
-        removeables.push(i);
-      }
-    }
-    while (removeables.length > 0) {
-      simulation.population.people.splice(removeables.pop(), 1);
-    }
+    simulation.environment.timestep();
     stats.update();
-
-    if (simulation.population.size == 0) {
+    if (simulation.environment.population.size == 0) {
       simulation.stop();
     }
   }
@@ -76,13 +62,13 @@ var stats = {
     transmitter.transmit('graph', stat);
   },
   populationSize: function() {
-    return simulation.population.people.length;
+    return simulation.environment.population.people.length;
   },
   birthCount: function() {
-    return simulation.population.births;
+    return simulation.environment.population.births;
   },
   deathCount: function() {
-    return simulation.population.deaths;
+    return simulation.environment.population.deaths;
   }
 };
 
@@ -118,6 +104,23 @@ function Environment(config) {
     birth: config.birthRate,
     death: config.deathRates
   };
+  this.population = {};
+
+  this.timestep = function() {
+    var removeables = [];
+    for (var i = 0, size = this.population.people.length; i < size; i++) {
+      var person = this.population.people[i];
+      person.growOld();
+      person.calculateProbabilities();
+      person.takeChances();
+      if (!person.alive) {
+        removeables.push(i);
+      }
+    }
+    while (removeables.length > 0) {
+      this.population.people.splice(removeables.pop(), 1);
+    }
+  }
 }
 
 function Person(config) {
@@ -126,7 +129,7 @@ function Person(config) {
   this.age = (config && typeof config == 'object' && 'age' in config) ? config.age : 0;
   this.gender = (config && typeof config == 'object' && 'gender' in config) ? config.gender : ['male', 'female'][Math.floor(Math.random() * 10) % 2];
 
-  simulation.population[this.gender + 's']++;
+  simulation.environment.population[this.gender + 's']++;
 
   this.probabilities = {
     die: {
@@ -140,8 +143,8 @@ function Person(config) {
         return 1;
       },
       execute: function() {
-        simulation.population[_this.gender + 's']--;
-        simulation.population.deaths++;
+        simulation.environment.population[_this.gender + 's']--;
+        simulation.environment.population.deaths++;
         _this.alive = false;
       }
     },
@@ -151,8 +154,8 @@ function Person(config) {
       },
       execute: function() {
         var child = new Person();
-        simulation.population.people.push(child);
-        simulation.population.births++;
+        simulation.environment.population.people.push(child);
+        simulation.environment.population.births++;
       }
     }
   };
